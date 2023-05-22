@@ -124,14 +124,34 @@ void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/
     }
 
     auto effect1 = spellInfo->Effects[0].Effect;
-    if (effect1 != REUSE_SPELL_EFFECT_HEAL)
+    bool many_effects = false;
+
+    if (effect1 == REUSE_SPELL_EFFECT_HEAL)
     {
-        return;
+        many_effects = true;
+    }
+    if (effect1 == REUSE_SPELL_EFFECT_MANA)
+    {
+        many_effects = true;
+    }
+    if (effect1 == REUSE_SPELL_EFFECT_AURA)
+    {
+        many_effects = true;
     }
 
+    if (!many_effects){
+        return;
+    }
+    bool many_visuals = false;
     auto visual1 = spellInfo->SpellVisual[0];
-    if (visual1 != REUSE_SPELL_VISUAL_POTION)
+    if (visual1 == REUSE_SPELL_VISUAL_POTION)
     {
+        many_visuals = true;
+    }
+    if (visual1 == REUSE_SPELL_VISUAL_POTION_OTHER_ONE){
+        many_visuals = true;
+    }
+    if(!many_visuals){
         return;
     }
 
