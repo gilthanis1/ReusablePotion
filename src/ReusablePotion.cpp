@@ -94,9 +94,72 @@ void ReusablePotionUnitScript::OnDamage(Unit* attacker, Unit* victim, uint32& /*
     SetPlayerPvPState(attPlayer, true);
     SetPlayerPvPState(victPlayer, true);
 }
+bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
+    if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
+    {
+        return;
+    }
 
-void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* spellInfo)
-{
+    if (!target)
+    {
+        return;
+    }
+
+    Player* player = target->ToPlayer();
+    if (!player)
+    {
+        return;
+    }
+
+    if (!sConfigMgr->GetOption<bool>("ReusablePotion.PvPEnable", false))
+    {
+        bool isInPvPCombat = GetPlayerPvPState(player);
+
+        if (isInPvPCombat)
+        {
+            return;
+        }
+    }
+    ItemTemplate iteminfo->GetTemplate();
+    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(iteminfo->spells[0]);
+    auto effect1 = spellInfo->Effects[0].Effect;
+    bool many_effects = false;
+
+    if (effect1 == REUSE_SPELL_EFFECT_HEAL)
+    {
+        many_effects = true;
+    }
+    if (effect1 == REUSE_SPELL_EFFECT_MANA)
+    {
+        many_effects = true;
+    }
+    if (effect1 == REUSE_SPELL_EFFECT_AURA)
+    {
+        many_effects = true;
+    }
+
+    if (!many_effects){
+        return;
+    }
+    bool many_visuals = false;
+    auto visual1 = spellInfo->SpellVisual[0];
+    if (visual1 == REUSE_SPELL_VISUAL_POTION)
+    {
+        many_visuals = true;
+    }
+    if (visual1 == REUSE_SPELL_VISUAL_POTION_OTHER_ONE){
+        many_visuals = true;
+    }
+    if(!many_visuals){
+        return;
+    }
+
+    player->SendCooldownEvent(spellInfo);
+    player->SetLastPotionId(0);
+}
+//
+//void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* spellInfo)
+/*{
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
     {
         return;
@@ -158,7 +221,7 @@ void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/
     player->SendCooldownEvent(spellInfo);
     player->SetLastPotionId(0);
 }
-
+*/
 void AddMyReusablePotionScripts()
 {
     new ReusablePotionPlayerScript();
