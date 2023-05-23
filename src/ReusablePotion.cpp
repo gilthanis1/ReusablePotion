@@ -94,7 +94,7 @@ void ReusablePotionUnitScript::OnDamage(Unit* attacker, Unit* victim, uint32& /*
     SetPlayerPvPState(attPlayer, true);
     SetPlayerPvPState(victPlayer, true);
 }
-bool ReusablePotionUnitScript::OnItemUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
+bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
     {
         return false;
