@@ -46,6 +46,6 @@ class ReusablePotionItemScript : public ItemScript
 public:
     ReusablePotionItemScript() : ItemScript("ReusablePotionItemScript") { }
     bool OnUse(Player* /*player*/, Item* /*item*/, SpellCastTargets const& /*targets*/) override;
-}
+};
 
 #endif // MODULE_REUSABLE_POTION_H
