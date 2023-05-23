@@ -94,21 +94,21 @@ void ReusablePotionUnitScript::OnDamage(Unit* attacker, Unit* victim, uint32& /*
     SetPlayerPvPState(attPlayer, true);
     SetPlayerPvPState(victPlayer, true);
 }
-bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
+bool ReusablePotionUnitScript::OnItemUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
     {
-        return;
+        return false;
     }
 
     if (!target)
     {
-        return;
+        return false;
     }
 
     Player* player = target->ToPlayer();
     if (!player)
     {
-        return;
+        return false;
     }
 
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.PvPEnable", false))
@@ -117,7 +117,7 @@ bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTarget
 
         if (isInPvPCombat)
         {
-            return;
+            return false;
         }
     }
     ItemTemplate iteminfo->GetTemplate();
@@ -139,7 +139,7 @@ bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTarget
     }
 
     if (!many_effects){
-        return;
+        return false;
     }
     bool many_visuals = false;
     auto visual1 = spellInfo->SpellVisual[0];
@@ -151,11 +151,12 @@ bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTarget
         many_visuals = true;
     }
     if(!many_visuals){
-        return;
+        return false;
     }
 
     player->SendCooldownEvent(spellInfo);
     player->SetLastPotionId(0);
+    return true;
 }
 //
 //void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* spellInfo)
