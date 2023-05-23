@@ -94,7 +94,7 @@ void ReusablePotionUnitScript::OnDamage(Unit* attacker, Unit* victim, uint32& /*
     SetPlayerPvPState(attPlayer, true);
     SetPlayerPvPState(victPlayer, true);
 }
-bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
+bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
     {
         return false;
@@ -121,7 +121,7 @@ bool ReusablePotionUnitScript::OnUse(Player* player, Item* item, SpellCastTarget
         }
     }
     ItemTemplate iteminfo->GetTemplate();
-    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(iteminfo->spells[0]);
+    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(iteminfo.Spells[0]);
     auto effect1 = spellInfo->Effects[0].Effect;
     bool many_effects = false;
 
@@ -227,4 +227,5 @@ void AddMyReusablePotionScripts()
 {
     new ReusablePotionPlayerScript();
     new ReusablePotionUnitScript();
+    new ReusablePotionItemScript();
 }

@@ -36,9 +36,16 @@ class ReusablePotionUnitScript : public UnitScript
 {
 public:
     ReusablePotionUnitScript() : UnitScript("ReusablePotionUnitScript") { }
-    //void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* /*spellInfo*/) override;
-    bool OnUse(Player* /*player*/, Item* /*item*/, SpellCastTargets const& /*targets*/) override;
+   //void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* /*spellInfo*/) override;
+    //bool OnUse(Player* /*player*/, Item* /*item*/, SpellCastTargets const& /*targets*/) override;
     void OnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) override;
 };
+
+class ReusablePotionItemScript : public ItemScript
+{
+public:
+    ReusablePotionItemScript() : ItemScript("ReusablePotionItemScript") { }
+    bool OnUse(Player* /*player*/, Item* /*item*/, SpellCastTargets const& /*targets*/) override;
+}
 
 #endif // MODULE_REUSABLE_POTION_H
