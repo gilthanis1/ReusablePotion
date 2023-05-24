@@ -100,6 +100,12 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
         return false;
     }
 
+    if (!target)
+    {
+        return false;
+    }
+
+    Player* player = target->ToPlayer();
     if (!player)
     {
         return false;
@@ -113,9 +119,7 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
         {
             return false;
         }
-    }
-    ItemTemplate iteminfo->GetTemplate();
-    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(iteminfo.Spells[0]);
+    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(item->GetTemplate()->Spells[0]);
     auto effect1 = spellInfo->Effects[0].Effect;
     bool many_effects = false;
 
