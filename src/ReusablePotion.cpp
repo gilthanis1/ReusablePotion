@@ -108,7 +108,7 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
         {
             return false;
         }
-    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(item->GetTemplate()->Spells[0]);
+    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(item->GetTemplate()->Spells[0].SpellId);
     auto effect1 = spellInfo->Effects[0].Effect;
     bool many_effects = false;
 
