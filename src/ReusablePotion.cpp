@@ -100,17 +100,6 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
         return false;
     }
 
-    if (!target)
-    {
-        return false;
-    }
-
-    Player* player = target->ToPlayer();
-    if (!player)
-    {
-        return false;
-    }
-
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.PvPEnable", false))
     {
         bool isInPvPCombat = GetPlayerPvPState(player);
