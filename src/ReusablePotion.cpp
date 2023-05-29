@@ -94,72 +94,16 @@ void ReusablePotionUnitScript::OnDamage(Unit* attacker, Unit* victim, uint32& /*
     SetPlayerPvPState(attPlayer, true);
     SetPlayerPvPState(victPlayer, true);
 }
-bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/){
+
+void ReusablePotionPlayerScript::OnSpellCast(Player* player, Spell* spell, bool /*skipCheck*/)
+{
+    SpellInfo const* spellInfo = spell->GetSpellInfo();
+    if (usedPotion) { // if a potion was used since the onspellcast call was made send a cooldown request for the potion then disable this
+        player->SendCooldownEvent(storage);
+        player->SetLastPotionId(0);
+        usedPotion = false;
+    }
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
-    {
-        return false;
-    }
-
-    if (!sConfigMgr->GetOption<bool>("ReusablePotion.PvPEnable", false))
-    {
-        bool isInPvPCombat = GetPlayerPvPState(player);
-
-        if (isInPvPCombat)
-        {
-            return false;
-        }
-    SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(item->GetTemplate()->Spells[0].SpellId);
-    auto effect1 = spellInfo->Effects[0].Effect;
-    bool many_effects = false;
-
-    if (effect1 == REUSE_SPELL_EFFECT_HEAL)
-    {
-        many_effects = true;
-    }
-    if (effect1 == REUSE_SPELL_EFFECT_MANA)
-    {
-        many_effects = true;
-    }
-    if (effect1 == REUSE_SPELL_EFFECT_AURA)
-    {
-        many_effects = true;
-    }
-
-    if (!many_effects){
-        return false;
-    }
-    bool many_visuals = false;
-    auto visual1 = spellInfo->SpellVisual[0];
-    if (visual1 == REUSE_SPELL_VISUAL_POTION)
-    {
-        many_visuals = true;
-    }
-    if (visual1 == REUSE_SPELL_VISUAL_POTION_OTHER_ONE){
-        many_visuals = true;
-    }
-    if(!many_visuals){
-        return false;
-    }
-
-    player->SendCooldownEvent(spellInfo);
-    player->SetLastPotionId(0);
-    return true;
-}
-//
-//void ReusablePotionUnitScript::ModifyHealReceived(Unit* target, Unit* /*healer*/, uint32& /*addHealth*/, SpellInfo const* spellInfo)
-/*{
-    if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
-    {
-        return;
-    }
-
-    if (!target)
-    {
-        return;
-    }
-
-    Player* player = target->ToPlayer();
-    if (!player)
     {
         return;
     }
@@ -173,24 +117,24 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
             return;
         }
     }
-
+    
     auto effect1 = spellInfo->Effects[0].Effect;
     bool many_effects = false;
 
-    if (effect1 == REUSE_SPELL_EFFECT_HEAL)
+    if (effect1 == REUSE_SPELL_EFFECT_HEAL && sConfigMgr->GetOption<bool>("ReusablePotion.EnableHealing", false))
     {
         many_effects = true;
     }
-    if (effect1 == REUSE_SPELL_EFFECT_MANA)
+    if (effect1 == REUSE_SPELL_EFFECT_MANA && sConfigMgr->GetOption<bool>("ReusablePotion.EnableMana", false))
     {
         many_effects = true;
     }
-    if (effect1 == REUSE_SPELL_EFFECT_AURA)
+    if (effect1 == REUSE_SPELL_EFFECT_AURA && sConfigMgr->GetOption<bool>("ReusablePotion.EnableAura", false))
     {
         many_effects = true;
     }
 
-    if (!many_effects){
+    if (many_effects == false) {
         return;
     }
     bool many_visuals = false;
@@ -199,20 +143,23 @@ bool ReusablePotionItemScript::OnUse(Player* player, Item* item, SpellCastTarget
     {
         many_visuals = true;
     }
-    if (visual1 == REUSE_SPELL_VISUAL_POTION_OTHER_ONE){
+    if (visual1 == REUSE_SPELL_VISUAL_POTION_OTHER_ONE) {
         many_visuals = true;
     }
-    if(!many_visuals){
+    if (visual1 == REUSE_SPELL_VISUAL_POTION_FREE_ACTION) {
+        many_visuals = true;
+    }
+    if (many_visuals == false) {
         return;
     }
-
-    player->SendCooldownEvent(spellInfo);
-    player->SetLastPotionId(0);
+    // if a potion is used let the class know and store the spellInfo for use when another spell is cast.
+    usedPotion = true;
+    storage = spellInfo;
+    return;
 }
-*/
-void AddMyReusablePotionScripts()
+
+void AddMyCustomReusablePotionScripts()
 {
     new ReusablePotionPlayerScript();
     new ReusablePotionUnitScript();
-    new ReusablePotionItemScript();
 }
