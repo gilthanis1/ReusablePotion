@@ -99,8 +99,10 @@ void ReusablePotionPlayerScript::OnSpellCast(Player* player, Spell* spell, bool 
 {
     SpellInfo const* spellInfo = spell->GetSpellInfo();
     if (usedPotion) { // if a potion was used since the onspellcast call was made send a cooldown request for the potion then disable this
-        player->SendCooldownEvent(storage);
-        player->SetLastPotionId(0);
+        if (lastPlayerPotion && spellStorage) {
+            lastPlayerPotion->SendCooldownEvent(spellStorage);
+            lastPlayerPotion->SetLastPotionId(0);
+        }
         usedPotion = false;
     }
     if (!sConfigMgr->GetOption<bool>("ReusablePotion.Enable", false))
@@ -152,9 +154,10 @@ void ReusablePotionPlayerScript::OnSpellCast(Player* player, Spell* spell, bool 
     if (many_visuals == false) {
         return;
     }
-    // if a potion is used let the class know and store the spellInfo for use when another spell is cast.
+    // if a potion is used let the class know and store the spellInfo and player for use when another spell is cast.
     usedPotion = true;
-    storage = spellInfo;
+    spellStorage = spellInfo;
+    lastPlayerPotion = player;
     return;
 }
 

@@ -29,7 +29,8 @@ class ReusablePotionPlayerScript : public PlayerScript
 {
 private:
     bool usedPotion = false;
-    SpellInfo const* storage;
+    SpellInfo const* spellStorage;
+    Player * lastPlayerPotion;
 public:
     ReusablePotionPlayerScript() : PlayerScript("ReusablePotionPlayerScript") { }
     void OnPlayerLeaveCombat(Player* /*player*/) override;
