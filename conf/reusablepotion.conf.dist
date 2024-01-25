@@ -61,4 +61,4 @@ ReusablePotion.Verbose = 0
 #                     1 - Enabled
 #
 
-ReusablePotion.PvPEnable = 0
+ReusablePotion.PvPEnable = 1
